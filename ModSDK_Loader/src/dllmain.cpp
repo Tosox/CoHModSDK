@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <fstream>
 
-#include "../util/Logger.hpp"
+#include "util/Logger.hpp"
 
 // --- Globals ---
 Logger logger;

@@ -165,11 +165,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp" />
-    <ClCompile Include="util\Logger.cpp" />
+    <ClCompile Include="src\util\Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="res\resource.h" />
-    <ClInclude Include="util\Logger.hpp" />
+    <ClInclude Include="src\util\Logger.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="res\resource.rc" />

@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <iostream>
+#include <filesystem>
 #include <fstream>
 
 #include "Logger.hpp"
@@ -9,18 +10,24 @@ Logger::Logger() {
     CreateDirectoryA("mods", nullptr);
     CreateDirectoryA("mods/logs", nullptr);
 
-    SYSTEMTIME st;
-    GetLocalTime(&st);
+	const char* mainLog = "mods/logs/sdk-loader.log";
+	const char* oldLog = "mods/logs/sdk-loader.log.bak";
 
-    char filename[128];
-    sprintf_s(filename, "mods/logs/%04d-%02d-%02d_%02d-%02d-%02d.log",
-        st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+	// Remove old log file
+    if (std::filesystem::exists(oldLog)) {
+        std::filesystem::remove(oldLog);
+	}
 
-    logFileName = filename;
-    logFile.open(logFileName, std::ios::out | std::ios::trunc);
+	// Rename the current log file to backup
+    if (std::filesystem::exists(mainLog)) {
+        std::filesystem::rename(mainLog, oldLog);
+    }
+
+	// Create a new main log file
+	logFile.open(mainLog, std::ios::out | std::ios::trunc);
 
     if (logFile.is_open()) {
-        LogInfo(std::string("Log file created: " + logFileName));
+        LogInfo(std::string("Log file created: " + std::string(mainLog)));
     }
 }
 
@@ -31,7 +38,6 @@ Logger::~Logger() {
 	}
 }
 
-// Helper: Get current date/time string
 std::string Logger::GetCurrentTimestamp() {
     SYSTEMTIME st;
     GetLocalTime(&st);
@@ -42,7 +48,6 @@ std::string Logger::GetCurrentTimestamp() {
     return std::string(buffer);
 }
 
-// Helper: Log message
 void Logger::LogMessage(const std::string& level, const std::string& message) {
     logFile << GetCurrentTimestamp() << "[" << level << "] " << message << std::endl;
     logFile.flush();

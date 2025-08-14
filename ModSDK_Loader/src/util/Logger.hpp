@@ -16,5 +16,4 @@ private:
 
 private:
 	std::ofstream logFile;
-	std::string logFileName;
 };

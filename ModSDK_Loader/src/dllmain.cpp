@@ -27,7 +27,6 @@ void LoadOriginalWW2Mod() {
 // --- Mod Loader ---
 void LoadMods() {
     CreateDirectoryA("mods", nullptr);
-    CreateDirectoryA("mods/logs", nullptr);
 
     std::ifstream config("CoHModSDKLoader.ini");
     if (!config.is_open()) {

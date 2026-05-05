@@ -1,8 +1,13 @@
 #include "../include/CoHModSDK.hpp"
 #include "../include/CoHModSDKGraphics.hpp"
+#include "../include/CoHModSDKUI.hpp"
 
 #include "graphics/GraphicsHooks.hpp"
 #include "runtime/RuntimeState.hpp"
+#include "ui/UILocString.hpp"
+#include "ui/UIScreenHooks.hpp"
+#include "ui/UITextWidgets.hpp"
+#include "ui/UIWidgetInterop.hpp"
 
 namespace {
     const CoHModSDKRuntimeInfoV1* GetRuntimeInfoImpl() {
@@ -76,6 +81,57 @@ namespace {
         &GraphicsHooks::RegisterD3D9CreateDevice,
         &GraphicsHooks::RegisterDXGICreateSwapChain,
     };
+
+    const CoHModSDKUiApiV1 kUiApi = {
+        COHMODSDK_ABI_VERSION,
+        sizeof(CoHModSDKUiApiV1),
+        &UIScreenHooks::RegisterDraw,
+        &UIScreenHooks::RegisterUpdate,
+        &UIScreenHooks::RegisterDeactivateAll,
+        &UIScreenHooks::RegisterUnloadScreen,
+        &UIWidgetInterop::ScreenManager_GetInstance,
+        &UIWidgetInterop::ScreenManager_FindScreen,
+        &UIWidgetInterop::Screen_GetRootWidget,
+        &UIWidgetInterop::Widget_SetPosition,
+        &UIWidgetInterop::Widget_SetSize,
+        &UIWidgetInterop::Widget_SetName,
+        &UIWidgetInterop::Widget_SetParent,
+        &UIWidgetInterop::Widget_GetPresentation,
+        &UIWidgetInterop::Widget_SetPresentation,
+        &UIWidgetInterop::Widget_GetHitArea,
+        &UIWidgetInterop::Widget_SetHitArea,
+        &UIWidgetInterop::WidgetProxy_Bind,
+        &UIWidgetInterop::WidgetProxy_SetVisible,
+        &UIWidgetInterop::WidgetProxy_SetEnabled,
+        &UIWidgetInterop::WidgetProxy_SetTextHAlign,
+        &UITextWidgets::TextLabel_Construct,
+        &UITextWidgets::TextLabel_Destruct,
+        &UITextWidgets::TextLabel_SetText,
+        &UITextWidgets::TextLabel_SetAutoSize,
+        &UITextWidgets::TextLabel_SetMultiline,
+        &UITextWidgets::Button_Construct,
+        &UITextWidgets::Button_Destruct,
+        &UITextWidgets::Button_SetText,
+        &UITextWidgets::CheckButton_Construct,
+        &UITextWidgets::CheckButton_Destruct,
+        &UITextWidgets::CheckButton_SetChecked,
+        &UITextWidgets::CheckButton_GetChecked,
+        &UITextWidgets::ArtLabel_Construct,
+        &UITextWidgets::ArtLabel_Destruct,
+        &UITextWidgets::ArtLabel_SetAllArtVisible,
+        &UITextWidgets::GenericWidget_Construct,
+        &UITextWidgets::GenericWidget_Destruct,
+        &UILocString::Construct,
+        &UILocString::Destruct,
+        &UIWidgetInterop::WidgetFactory_Create,
+        &UIWidgetInterop::FindWidgetExtension,
+        &UIWidgetInterop::FindWidgetByName,
+        &UIWidgetInterop::AddRenderChild,
+        &UIWidgetInterop::ConfigureWidget,
+        &UIWidgetInterop::AttachRenderChild,
+        &UIWidgetInterop::DetachRenderChild,
+        &UIWidgetInterop::CopyPresentation,
+    };
 }
 
 extern "C" bool CoHModSDKRuntime_Initialize(const CoHModSDKRuntimeInitV1* init) {
@@ -113,5 +169,14 @@ extern "C" bool CoHModSDK_GetGraphicsApi(std::uint32_t abiVersion, const CoHModS
     }
 
     *outApi = &kGraphicsApi;
+    return true;
+}
+
+extern "C" bool CoHModSDK_GetUiApi(std::uint32_t abiVersion, const CoHModSDKUiApiV1** outApi) {
+    if ((outApi == nullptr) || (abiVersion > COHMODSDK_ABI_VERSION)) {
+        return false;
+    }
+
+    *outApi = &kUiApi;
     return true;
 }

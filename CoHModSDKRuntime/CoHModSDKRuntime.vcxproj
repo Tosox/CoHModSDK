@@ -183,16 +183,27 @@
     <ClCompile Include="src\hooks\HookEngine.cpp" />
     <ClCompile Include="src\memory\PatternScanner.cpp" />
     <ClCompile Include="src\runtime\RuntimeState.cpp" />
+    <ClCompile Include="src\ui\UILocString.cpp" />
+    <ClCompile Include="src\ui\UIResolve.cpp" />
+    <ClCompile Include="src\ui\UIScreenHooks.cpp" />
+    <ClCompile Include="src\ui\UITextWidgets.cpp" />
+    <ClCompile Include="src\ui\UIWidgetInterop.cpp" />
     <ClCompile Include="src\utils\Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\CoHModSDK.hpp" />
     <ClInclude Include="include\CoHModSDKGraphics.hpp" />
+    <ClInclude Include="include\CoHModSDKUI.hpp" />
     <ClInclude Include="src\config\ConfigRegistry.hpp" />
     <ClInclude Include="src\graphics\GraphicsHooks.hpp" />
     <ClInclude Include="src\hooks\HookEngine.hpp" />
     <ClInclude Include="src\memory\PatternScanner.hpp" />
     <ClInclude Include="src\runtime\RuntimeState.hpp" />
+    <ClInclude Include="src\ui\UILocString.hpp" />
+    <ClInclude Include="src\ui\UIResolve.hpp" />
+    <ClInclude Include="src\ui\UIScreenHooks.hpp" />
+    <ClInclude Include="src\ui\UITextWidgets.hpp" />
+    <ClInclude Include="src\ui\UIWidgetInterop.hpp" />
     <ClInclude Include="src\utils\Logger.hpp" />
   </ItemGroup>
   <ItemGroup>

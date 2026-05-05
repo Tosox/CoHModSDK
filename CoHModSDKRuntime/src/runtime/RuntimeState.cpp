@@ -6,11 +6,12 @@
 #include <filesystem>
 
 #include "../graphics/GraphicsHooks.hpp"
+#include "../ui/UIScreenHooks.hpp"
 #include "../memory/PatternScanner.hpp"
 
 namespace Runtime {
     namespace {
-        constexpr char kRuntimeVersion[] = "0.6.0";
+        constexpr char kRuntimeVersion[] = "0.7.0";
 
         HMODULE ResolveHandleFromContext(const CoHModSDKModContextV1* modContext) {
             if (modContext == nullptr) {
@@ -90,6 +91,7 @@ namespace Runtime {
         }
 
         state.logger.LogInfo("CoHModSDK runtime shutting down");
+        UIScreenHooks::Shutdown();
         GraphicsHooks::Shutdown();
         state.configRegistry.Shutdown();
         state.registeredMods.clear();

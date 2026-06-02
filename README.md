@@ -18,34 +18,83 @@ Releases are split into two parts:
 
 - `CoHModSDK`
   - for game installation
-  - contains `CoHModSDKLoader.dll`, `CoHModSDKRuntime.dll`, and `CoHModSDKLoader.ini`
+  - contains `CoHModSDKShim.dll`, `CoHModSDKLoader.dll`, `CoHModSDKRuntime.dll`, and `CoHModSDKLoader.ini`
 - `CoHModSDK-Dev`
   - for mod authors
   - contains `CoHModSDK.lib` and `CoHModSDK.hpp`
 
-## 🔧 Installing the Loader
+## 🔧 Installing
 
-The loader is intended for mods that use `DllName = CoHModSDKLoader` in their
-`.module` file.
+Installation uses a shim-based layout.
 
-Expected layout:
+`CoHModSDKShim.dll` is the stable DLL named by `.module` files. It proxies the
+game's required `GetDllInterface` and `GetDllVersion` exports to `WW2Mod.dll`,
+resolves the active SDK folder, and loads that folder's `CoHModSDKLoader.dll`.
+
+`CoHModSDKLoader.dll` is scoped SDK infrastructure. It should live beside the
+matching `CoHModSDKRuntime.dll`, `CoHModSDKLoader.ini`, `mods`, `configs`, and
+`logs` directories for one specific game mod.
+
+### Vanilla Layout
+
+When the game is launched without `-mod`, the shim uses `WW2\CoHModSDK`.
 
 ```text
-CoHModSDKLoader.dll
-CoHModSDKRuntime.dll
-CoHModSDKLoader.ini
-mods\
-  YourMod.dll
+Company of Heroes Relaunch\
+  CoHModSDKShim.dll
+  WW2\
+    CoHModSDK\
+      CoHModSDKLoader.dll
+      CoHModSDKRuntime.dll
+      CoHModSDKLoader.ini
+      mods\
+        YourSDKMod.dll
+      configs\
+      logs\
 ```
 
-Basic setup:
+The vanilla `.module` file only needs:
 
-1. Place `CoHModSDKLoader.dll` and `CoHModSDKRuntime.dll` into the game directory
-2. Create `CoHModSDKLoader.ini` in the same directory
-3. Put SDK mod DLLs into the `mods` directory
-4. Make sure the target mod uses `DllName = CoHModSDKLoader`
+```ini
+[global]
+DllName = CoHModSDKShim
+```
 
-Example `CoHModSDKLoader.ini`:
+### Modded Layout
+
+When the game is launched with `-mod`, the shim treats the parameter value as
+the active `.module` file name. For modded launches, `[global] ModSDKFolder` is
+required.
+
+```ini
+[global]
+DllName = CoHModSDKShim
+ModSDKFolder = PhoenixMod\CoHModSDK
+```
+
+```text
+Company of Heroes Relaunch\
+  CoHModSDKShim.dll
+  PhoenixMod.module
+  PhoenixMod\
+    CoHModSDK\
+      CoHModSDKLoader.dll
+      CoHModSDKRuntime.dll
+      CoHModSDKLoader.ini
+      mods\
+        YourSDKMod.dll
+      configs\
+      logs\
+```
+
+`ModSDKFolder` is relative to the game directory. If it is missing during a
+modded launch, startup fails with a clear error instead of falling back to a
+different SDK folder.
+
+### Loader Config
+
+`CoHModSDKLoader.ini` is read from the resolved SDK folder. It lists one SDK mod
+DLL per line:
 
 ```ini
 # One DLL name per line
@@ -53,10 +102,17 @@ MyFirstSDKMod.dll
 AnotherMod.dll
 ```
 
-The loader writes a log file to:
+Those DLLs are loaded from:
 
 ```text
-mods/logs/sdk-loader.log
+<resolved SDK folder>\mods\
+```
+
+Logs and configs remain scoped under the same SDK folder:
+
+```text
+<resolved SDK folder>\logs\
+<resolved SDK folder>\configs\
 ```
 
 ## 📖 Documentation

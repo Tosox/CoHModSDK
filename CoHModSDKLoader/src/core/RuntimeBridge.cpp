@@ -8,10 +8,6 @@
 #include "Loader.hpp"
 
 namespace {
-    constexpr char kRuntimeDllName[] = "CoHModSDKRuntime.dll";
-    constexpr char kRuntimeLogPath[] = "mods/logs/sdk-runtime.log";
-    constexpr char kGameModuleName[] = "WW2Mod.dll";
-
     using RuntimeInitializeFn = bool(*)(const CoHModSDKRuntimeInitV1* init);
     using RuntimeEnableAllHooksFn = void(*)();
     using RuntimeShutdownFn = void(*)();
@@ -31,7 +27,7 @@ namespace Loader {
             return;
         }
 
-        const std::filesystem::path runtimePath = GetRelativePath(kRuntimeDllName);
+        const std::filesystem::path runtimePath = GetRelativePath("CoHModSDKRuntime.dll");
         runtimeModule = LoadLibraryA(runtimePath.string().c_str());
         if (runtimeModule == nullptr) {
             FailFast("Failed to load CoHModSDKRuntime.dll");
@@ -48,8 +44,8 @@ namespace Loader {
 
         const std::filesystem::path loaderDirectory = GetDirectory();
         const std::filesystem::path modsDirectory = GetRelativePath("mods");
-        const std::filesystem::path configDirectory = GetRelativePath("mods/config");
-        const std::filesystem::path logPath = GetRelativePath(kRuntimeLogPath);
+        const std::filesystem::path configDirectory = GetRelativePath("configs");
+        const std::filesystem::path logPath = GetRelativePath("logs/runtime.log");
         const std::string loaderDirectoryString = loaderDirectory.string();
         const std::string modsDirectoryString = modsDirectory.string();
         const std::string configDirectoryString = configDirectory.string();
@@ -62,7 +58,7 @@ namespace Loader {
         init.modsDirectory = modsDirectoryString.c_str();
         init.configDirectory = configDirectoryString.c_str();
         init.logPath = logPathString.c_str();
-        init.gameModuleName = kGameModuleName;
+        init.gameModuleName = "WW2Mod.dll";
 
         if (!runtimeInitialize(&init)) {
             FailFast("CoHModSDKRuntime.dll failed to initialize");
@@ -79,6 +75,16 @@ namespace Loader {
         if (fnRuntimeShutdown != nullptr) {
             fnRuntimeShutdown();
         }
+
+        if (runtimeModule != nullptr) {
+            FreeLibrary(runtimeModule);
+        }
+
+        runtimeModule = nullptr;
+        fnRuntimeEnableAllHooks = nullptr;
+        fnRuntimeShutdown = nullptr;
+        fnRuntimeRegisterMod = nullptr;
+        fnRuntimeUnregisterMod = nullptr;
     }
 
     bool RegisterModWithRuntime(HMODULE modHandle, const CoHModSDKModuleV1* module, const CoHModSDKModContextV1** outContext) {

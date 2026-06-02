@@ -9,7 +9,6 @@ namespace Loader {
     void SetModuleHandle(HMODULE loaderModule);
     void EnsureInitialized();
     void Shutdown();
-    void LoadOriginalDll();
 
     [[noreturn]] void FailFast(const std::string& message);
     std::filesystem::path GetDirectory();

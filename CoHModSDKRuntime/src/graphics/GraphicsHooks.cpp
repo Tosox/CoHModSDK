@@ -2,7 +2,6 @@
 
 #include <Windows.h>
 
-#include <mutex>
 #include <vector>
 
 #include "../runtime/RuntimeState.hpp"
@@ -18,7 +17,6 @@ namespace {
         CoHModSDKDXGICreateSwapChainPostFn post = nullptr;
     };
 
-    std::mutex gMutex;
     std::vector<D3D9Callbacks> gD3D9Callbacks;
     std::vector<DXGICallbacks> gDXGICallbacks;
 
@@ -34,23 +32,17 @@ namespace {
 
     HRESULT __stdcall HookedD3D9CreateDevice(IDirect3D9* _this, UINT adapter, D3DDEVTYPE deviceType, HWND window,
         DWORD flags, D3DPRESENT_PARAMETERS* params, IDirect3DDevice9** device) {
-        {
-            std::scoped_lock lock(gMutex);
-            for (const D3D9Callbacks& cb : gD3D9Callbacks) {
-                if ((cb.pre != nullptr) && !cb.pre(_this, &adapter, &deviceType, &window, &flags, params)) {
-                    return E_ABORT;
-                }
+        for (const D3D9Callbacks& cb : gD3D9Callbacks) {
+            if ((cb.pre != nullptr) && !cb.pre(_this, &adapter, &deviceType, &window, &flags, params)) {
+                return E_ABORT;
             }
         }
 
         const HRESULT result = oFnD3D9CreateDevice(_this, adapter, deviceType, window, flags, params, device);
 
-        {
-            std::scoped_lock lock(gMutex);
-            for (const D3D9Callbacks& cb : gD3D9Callbacks) {
-                if (cb.post != nullptr) {
-                    cb.post(_this, adapter, deviceType, window, flags, params, result, (device != nullptr) ? *device : nullptr);
-                }
+        for (const D3D9Callbacks& cb : gD3D9Callbacks) {
+            if (cb.post != nullptr) {
+                cb.post(_this, adapter, deviceType, window, flags, params, result, (device != nullptr) ? *device : nullptr);
             }
         }
 
@@ -59,7 +51,7 @@ namespace {
 
     IDirect3D9* WINAPI HookedDirect3DCreate9(UINT version) {
         IDirect3D9* direct3D = oFnDirect3DCreate9(version);
-        if (direct3D != nullptr) {
+        if ((direct3D != nullptr) && (oFnD3D9CreateDevice == nullptr)) {
             Runtime::GetState().hookEngine.CreateHook(
                 ModSDK::Memory::GetVTableEntry(direct3D, 16u),
                 reinterpret_cast<void*>(&HookedD3D9CreateDevice),
@@ -70,23 +62,17 @@ namespace {
 
     HRESULT __stdcall HookedDXGIFactoryCreateSwapChain(IDXGIFactory* _this, IUnknown* device,
         DXGI_SWAP_CHAIN_DESC* description, IDXGISwapChain** swapChain) {
-        {
-            std::scoped_lock lock(gMutex);
-            for (const DXGICallbacks& cb : gDXGICallbacks) {
-                if ((cb.pre != nullptr) && !cb.pre(_this, &device, description)) {
-                    return E_ABORT;
-                }
+        for (const DXGICallbacks& cb : gDXGICallbacks) {
+            if ((cb.pre != nullptr) && !cb.pre(_this, &device, description)) {
+                return E_ABORT;
             }
         }
 
         const HRESULT result = oFnDxgiCreateSwapChain(_this, device, description, swapChain);
 
-        {
-            std::scoped_lock lock(gMutex);
-            for (const DXGICallbacks& cb : gDXGICallbacks) {
-                if (cb.post != nullptr) {
-                    cb.post(_this, device, description, result, (swapChain != nullptr) ? *swapChain : nullptr);
-                }
+        for (const DXGICallbacks& cb : gDXGICallbacks) {
+            if (cb.post != nullptr) {
+                cb.post(_this, device, description, result, (swapChain != nullptr) ? *swapChain : nullptr);
             }
         }
 
@@ -95,7 +81,7 @@ namespace {
 
     HRESULT WINAPI HookedCreateDXGIFactory(REFIID riid, void** factory) {
         const HRESULT result = oFnCreateDXGIFactory(riid, factory);
-        if (SUCCEEDED(result) && (factory != nullptr) && (*factory != nullptr)) {
+        if (SUCCEEDED(result) && (factory != nullptr) && (*factory != nullptr) && (oFnDxgiCreateSwapChain == nullptr)) {
             Runtime::GetState().hookEngine.CreateHook(
                 ModSDK::Memory::GetVTableEntry(*factory, 10u),
                 reinterpret_cast<void*>(&HookedDXGIFactoryCreateSwapChain),
@@ -133,7 +119,6 @@ namespace GraphicsHooks {
     }
 
     void Shutdown() {
-        std::scoped_lock lock(gMutex);
         gD3D9Callbacks.clear();
         gDXGICallbacks.clear();
     }
@@ -142,7 +127,6 @@ namespace GraphicsHooks {
         if ((pre == nullptr) && (post == nullptr)) {
             return false;
         }
-        std::scoped_lock lock(gMutex);
         gD3D9Callbacks.push_back({pre, post});
         return true;
     }
@@ -151,7 +135,6 @@ namespace GraphicsHooks {
         if ((pre == nullptr) && (post == nullptr)) {
             return false;
         }
-        std::scoped_lock lock(gMutex);
         gDXGICallbacks.push_back({pre, post});
         return true;
     }

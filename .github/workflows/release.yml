@@ -41,6 +41,7 @@ jobs:
           '#   MyMod.dll' \
           '#   AnotherMod.dll' \
           > CoHModSDK/CoHModSDKLoader.ini
+        cp -a artifact/CoHModSDKShim.dll CoHModSDK/
         cp -a artifact/CoHModSDKLoader.dll CoHModSDK/
         cp -a artifact/CoHModSDKRuntime.dll CoHModSDK/
         cd CoHModSDK

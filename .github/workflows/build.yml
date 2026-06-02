@@ -36,6 +36,7 @@ jobs:
         mkdir merged
         cp _build/CoHModSDKRuntime/bin/${{ env.BUILD_CONFIGURATION }}/${{ env.BUILD_ARCHITECTURE }}/* merged/
         cp _build/CoHModSDKLoader/bin/${{ env.BUILD_CONFIGURATION }}/${{ env.BUILD_ARCHITECTURE }}/* merged/
+        cp _build/CoHModSDKShim/bin/${{ env.BUILD_CONFIGURATION }}/${{ env.BUILD_ARCHITECTURE }}/* merged/
 
     - name: Archive Build Artifacts
       uses: actions/upload-artifact@v4

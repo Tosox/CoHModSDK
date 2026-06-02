@@ -17,7 +17,7 @@
 namespace {
     constexpr char kLoaderConfigName[] = "CoHModSDKLoader.ini";
     constexpr char kModsDirectoryName[] = "mods";
-    constexpr char kLoaderLogPath[] = "mods/logs/sdk-loader.log";
+    constexpr char kLoaderLogPath[] = "logs/loader.log";
 
     using GetModModuleFn = bool(*)(std::uint32_t abiVersion, const CoHModSDKModuleV1** outModule);
     using SetModContextFn = void(*)(const CoHModSDKModContextV1* modContext);
@@ -205,5 +205,7 @@ namespace Loader {
             UnregisterModWithRuntime(loadedMod.handle);
             FreeLibrary(loadedMod.handle);
         }
+
+        loadedMods.clear();
     }
 }

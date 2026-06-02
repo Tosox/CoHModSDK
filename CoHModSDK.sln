@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoHModSDKRuntime", "CoHModS
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoHModSDKLoader", "CoHModSDKLoader\CoHModSDKLoader.vcxproj", "{4B226E71-0595-43BD-9F9F-818026FE3D55}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoHModSDKShim", "CoHModSDKShim\CoHModSDKShim.vcxproj", "{A9CF5797-7743-4382-9F18-8C683E140E54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -21,6 +23,10 @@ Global
 		{4B226E71-0595-43BD-9F9F-818026FE3D55}.Debug|x86.Build.0 = Debug|Win32
 		{4B226E71-0595-43BD-9F9F-818026FE3D55}.Release|x86.ActiveCfg = Release|Win32
 		{4B226E71-0595-43BD-9F9F-818026FE3D55}.Release|x86.Build.0 = Release|Win32
+		{A9CF5797-7743-4382-9F18-8C683E140E54}.Debug|x86.ActiveCfg = Debug|Win32
+		{A9CF5797-7743-4382-9F18-8C683E140E54}.Debug|x86.Build.0 = Debug|Win32
+		{A9CF5797-7743-4382-9F18-8C683E140E54}.Release|x86.ActiveCfg = Release|Win32
+		{A9CF5797-7743-4382-9F18-8C683E140E54}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

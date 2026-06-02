@@ -1,0 +1,7 @@
+LIBRARY "CoHModSDKShim"
+
+EXPORTS
+    "??0_Mutex@std@@QAE@W4_Uninitialized@1@@Z" = @ForwardStdMutexCtor@12 @1
+    "??4_Init_locks@std@@QAEAAV01@ABV01@@Z" = @ForwardStdInitLocksAssign@12 @2
+    GetDllInterface @3
+    GetDllVersion @4

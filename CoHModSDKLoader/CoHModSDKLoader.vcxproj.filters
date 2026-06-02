@@ -8,10 +8,6 @@
       <UniqueIdentifier>{9bcb5222-4f77-4db8-8c80-8d6f7f57d801}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="src\exports">
-      <UniqueIdentifier>{45a9cd95-54fe-4204-b294-8c11b8122833}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="src\core">
       <UniqueIdentifier>{b1c2d3e4-f5a6-7890-abcd-ef1234567890}</UniqueIdentifier>
     </Filter>
@@ -35,9 +31,6 @@
     <ClCompile Include="src\mods\ModLoader.cpp">
       <Filter>src\mods</Filter>
     </ClCompile>
-    <ClCompile Include="src\exports\ProxyExports.cpp">
-      <Filter>src\exports</Filter>
-    </ClCompile>
     <ClCompile Include="src\utils\Logger.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
@@ -54,9 +47,6 @@
     </ClInclude>
     <ClInclude Include="src\mods\ModLoader.hpp">
       <Filter>src\mods</Filter>
-    </ClInclude>
-    <ClInclude Include="src\exports\ProxyExports.hpp">
-      <Filter>src\exports</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\Logger.hpp">
       <Filter>src\utils</Filter>
